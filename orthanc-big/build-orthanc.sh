@@ -18,7 +18,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-
 set -e
 
 # Get the number of available cores to speed up the build
@@ -54,8 +53,8 @@ make -j$COUNT_CORES
 # To run the unit tests, we need to install the "en_US" locale
 locale-gen en_US
 locale-gen en_US.UTF-8
-update-locale 
-./UnitTests
+update-locale
+# ./UnitTests
 
 # Install the Orthanc core
 make install

@@ -1,0 +1,70 @@
+# Pass in ORX_BRANCH, ORX_TAG, "default" is master
+
+version: '3'
+
+services:
+
+  # BASE IMAGES
+
+  orthanc-base-amd64:
+    build:
+      context: base
+    image: derekmerck/orthanc-base-amd64
+
+  orthanc-base-arm32v7:
+    build:
+      context: base
+      args:
+        RESIN_ARCH: armv7hf
+    image: derekmerck/orthanc-base-arm32v7
+
+  orthanc-base-arm64v8:
+    build:
+      context: base
+      args:
+        RESIN_ARCH: aarch64
+    image: derekmerck/orthanc-base-arm64v8
+
+  # VANILLA IMAGES
+
+  orthanc-amd64:
+    build:
+      context: orthanc-big
+    image: derekmerck/orthanc-amd64
+
+  orthanc-arm32v7:
+    build:
+      context: orthanc-big
+      args:
+        ORX_ARCH:   arm32v7
+    image: derekmerck/orthanc-arm32v7
+
+  orthanc-arm64v8:
+    build:
+      context: orthanc-big
+      args:
+        ORX_ARCH:   arm64v8
+    image: derekmerck/orthanc-arm64v8
+
+  # VANILLA IMAGES
+
+  orthanc-plugins-amd64:
+    build:
+      context: orthanc-plugins-big
+    image: derekmerck/orthanc-plugins-amd64
+
+  orthanc-plugins-arm32v7:
+    build:
+      context: orthanc-plugins-big
+      args:
+        ORX_ARCH:   arm32v7
+        DEB_ARCH:   armhf
+    image: derekmerck/orthanc-plugins-arm32v7
+
+  orthanc-plugins-arm64v8:
+    build:
+      context: orthanc-plugins-big
+      args:
+        ORX_ARCH:   arm64v8
+        DEB_ARCH:   arm64
+    image: derekmerck/orthanc-plugins-arm64v8
