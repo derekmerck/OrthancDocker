@@ -1,0 +1,57 @@
+# safelist
+branches:
+  only:
+    - system_python
+
+dist: trusty
+language: python
+group: edge
+
+python:
+  - "3.6"
+services:
+  - docker
+
+addons:
+  apt:
+    packages:
+      - docker-ce
+
+env:
+  global:
+    - SERVICE0="orthanc-base"
+    - SERVICE1="orthanc"
+    - SERVICE2="orthanc-plugins"
+
+  matrix:
+    - ARCH_TAG="amd64"
+    - ARCH_TAG="arm32v7"
+    - ARCH_TAG="arm64v8"
+
+before_install:
+
+  # Put docker into "experimental" for manifest function
+  - mkdir -p $HOME/.docker
+  - echo '{"experimental":"enabled"}' > "$HOME/.docker/config.json"
+
+  - pip3 install pyyaml  # for manifest-it
+
+    # Register qemu as cross-compiler
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+
+install:
+
+  # Build image
+  - docker-compose build $SERVICE0-$ARCH_TAG
+  - docker-compose build $SERVICE1-$ARCH_TAG
+  - docker-compose build $SERVICE2-$ARCH_TAG
+
+script: true
+
+after_success:
+
+  # Login to docker for push
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+  # manifest and push
+  - python3 manifest-it.py orthanc-xarch.manifest.yml

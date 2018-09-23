@@ -1,0 +1,39 @@
+- image: "derekmerck/orthanc:latest"
+
+  manifests:
+    - image: "derekmerck/orthanc-amd64"
+      platform:
+        architecture: amd64
+        os: linux
+
+    - image: "derekmerck/orthanc-arm32v7"
+      platform:
+        architecture: arm
+        variant: v7
+        os: linux
+
+    - image: "derekmerck/orthanc-arm64v8"
+      platform:
+        architecture: arm
+        variant: v8
+        os: linux
+
+- image: "derekmerck/orthanc-plugins:latest"
+
+  manifests:
+    - image: "derekmerck/orthanc-plugins-amd64"
+      platform:
+        architecture: amd64
+        os: linux
+
+    - image: "derekmerck/orthanc-plugins-arm32v7"
+      platform:
+        architecture: arm
+        variant: v7
+        os: linux
+
+    - image: "derekmerck/orthanc-plugins-arm64v8"
+      platform:
+        architecture: arm
+        variant: v8
+        os: linux
