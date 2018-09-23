@@ -30,16 +30,17 @@ Most low-power single board computers such as the Raspberry Pi and Beagleboard a
 
 ## Build
 
-Unfortunately, we cannot use `depends_on` for build dependencies in `docker-compose`, so the base services must explicitly built first.
+We cannot use `depends_on` for build dependencies in `docker-compose`, so the base services must explicitly built first.
 
 ```bash
 $ docker-compose build orthanc-base-amd64 orthanc-amd64 orthanc-plugins-amd64
 ```
 
-To bulid the entire suite, call `docker-compose twice`, first with only the base services, and then call `manifest-it.py` to manifest and push the final images.
+To bulid the entire suite, setup the cross-compiler, then call `docker-compose twice`, first with only the base services, and then call `manifest-it.py` to manifest and push the final images.
 
 ```bash
-$ docker-compose build base-amd64 base-arm32v7 base-arm64v8 etc...
+$ docker run --rm --privileged multiarch/qemu-user-static:register --reset
+$ docker-compose build base-amd64 base-arm32v7 base-arm64v8
 $ docker-compose bulid
 $ python3 manifest-it.py xarch-orthanc.manifest.yml
 ```
