@@ -64,7 +64,7 @@ Specifically architected images can be directly pulled using the format `derekme
 
 [Cavium ThunderX]: https://www.cavium.com/product-thunderx-arm-processors.html
 [Packet.net]: https://packet.net
-[WorksOnArm]: https://www.worksonarm.com
+[Works On Arm]: https://www.worksonarm.com
 
 
 ## Changes
