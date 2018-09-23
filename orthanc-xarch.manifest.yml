@@ -1,4 +1,4 @@
-- image: "derekmerck/orthanc:latest"
+- image: "derekmerck/orthanc:testing"
 
   manifests:
     - image: "derekmerck/orthanc-amd64:latest"
@@ -18,7 +18,7 @@
         variant: v8
         os: linux
 
-- image: "derekmerck/orthanc-plugins:latest"
+- image: "derekmerck/orthanc-plugins:testing"
 
   manifests:
     - image: "derekmerck/orthanc-plugins-amd64:latest"
