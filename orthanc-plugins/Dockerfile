@@ -8,8 +8,10 @@ FROM derekmerck/orthanc-$ORX_ARCH
 MAINTAINER Derek Merck <derek_merck@brown.edu>
 LABEL Description="X-Arch Orthanc, free DICOM server (plugins)" Vendor="The Orthanc project"
 
-RUN apt-get clean && apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install libgdcm2-dev libjpeg-dev postgresql-server-dev-all libtiff-dev libopenslide-dev && rm -rf /var/lib/apt/lists/*
+RUN apt -y clean && apt -y update
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install libgdcm2-dev libjpeg-dev postgresql-server-dev-all libtiff-dev libopenslide-dev
+  && apt -y clean \
+  && rm -rf /var/lib/apt/lists/*
 
 # libopenjpeg-dev doesn't exist for Debian Stretch and only exists in sid for amd64 and arm64 --
 # this is a bad habit, but probably ok for a Docker image where nothing will be updated
