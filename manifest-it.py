@@ -1,8 +1,43 @@
 #! python
 
-# Note that arm32v7 or armv7hf is arch: arm, variant: v7, which makes sense but is poorly documented.
-# Acceptable architectures are listed here:
-# https://raw.githubusercontent.com/docker-library/official-images/a7ad3081aa5f51584653073424217e461b72670a/bashbrew/go/vendor/src/github.com/docker-library/go-dockerlibrary/architecture/oci-platform.go
+"""
+manifest-it.py
+Merck, Summer 2018
+
+Create manifest files for multi-arch images.
+
+Uses simple `manifest.yaml` description format:
+
+---
+- image: "domain/master-image-name:tag"
+
+  manifests:
+    - image: "domain/amd64-image-name:tag"
+      platform:
+        architecture: amd64
+        os: linux
+
+    - image: "domain/armhf-image-name:tag"
+      platform:
+        architecture: arm
+        variant: v7
+        os: linux
+
+    - image: "domain/arm64-image-name:tag"
+      platform:
+        architecture: arm
+        variant: v8
+        os: linux
+---
+
+Note that armhf or arm32v7 is arch: arm, variant: v7, which makes sense, but is poorly documented.
+
+Acceptable architecture definitions are listed here:
+https://raw.githubusercontent.com/docker-library/official-images/a7ad3081aa5f51584653073424217e461b72670a/bashbrew/go/vendor/src/github.com/docker-library/go-dockerlibrary/architecture/oci-platform.go
+
+All images must be present on the manifesting system or a partial master manifest will be created with missing references.
+
+"""
 
 import yaml, logging
 from subprocess import call
@@ -36,7 +71,7 @@ def docker_manifest_push(prime):
 
 def parse_args():
 
-    p = ArgumentParser("manifest-it.py creates docker manifests for multiple architectures")
+    p = ArgumentParser("manifest-it.py creates Docker manifests for multi-architecture images")
     p.add_argument("manifest_file", help="File with manifest data and aliases")
     p.add_argument('-d', '--dryrun', action="store_true", help="Retag and manifest but don't push")
 
@@ -68,4 +103,3 @@ if __name__ == "__main__":
 
         if not opts.dryrun:
             docker_manifest_push(prime)
-
