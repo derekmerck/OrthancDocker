@@ -30,18 +30,18 @@ Most low-power single board computers such as the Raspberry Pi and Beagleboard a
 
 ## Build
 
-We cannot use `depends_on` for build dependencies in `docker-compose`, so the base services must explicitly built first.
+We cannot use `depends_on` for build dependencies in `docker-compose`, so the vanilla `orthanc` image must explicitly built before the `orthanc-plugins` image.
 
 ```bash
-$ docker-compose build orthanc-base-amd64 orthanc-amd64 orthanc-plugins-amd64
+$ docker-compose build orthanc-amd64 orthanc-plugins-amd64
 ```
 
-To bulid the entire suite, setup the cross-compiler, then call `docker-compose twice`, first with only the base services, and then call `manifest-it.py` to manifest and push the final images.
+To bulid the entire suite: first register the cross-compilers, then call `docker-compose twice`, first with  the vanilla `orthanc` images, and then with the `orthanc-plugin` images.  Finally, call `manifest-it.py` to manifest and push the final images (you will need to update the compose and manifest files to point at your own Docker domain).
 
 ```bash
 $ docker run --rm --privileged multiarch/qemu-user-static:register --reset
-$ docker-compose build base-amd64 base-arm32v7 base-arm64v8
-$ docker-compose bulid
+$ docker-compose build orthanc-amd64 orthanc-arm32v7 orthanc-arm64v8
+$ docker-compose bulid orthanc-plugins-amd64 orthanc-plugins-arm32v7 orthanc-plugins-arm64v8
 $ python3 manifest-it.py xarch-orthanc.manifest.yml
 ```
 
@@ -49,14 +49,14 @@ An automation pipeline for image generation is provided in the `.travis.yml` scr
 
 ## Pull
 
-Images are _theoretically_ manifested per Docker.io guidelines so that the appropriately architected image be will automatically selected for a given tag depending on the pulling architecture.
+Images are _theoretically_ manifested per Docker.io guidelines so that an appropriately architected image be will automatically selected for a given tag depending on the pulling architecture.
 
 ```bash
 $ docker run derekmerck/orthanc
 $ docker run derekmerck/orthanc-plugins
 ```
 
-Specifically architected images can be directly pulled using the format `derekmerck/orthanc{-plugins}{-arch}{:tag}`, where `arch` is one of `amd64`, `arm32v7`, or `arm64v8`.
+Specifically architected images can be directly pulled using the format `derekmerck/orthanc{-plugins}{-arch}{:tag}`, where `arch` is one of `amd64`, `arm32v7`, or `arm64v8`.  Such explicit architecture specification is necessary, for example, on Resin hosts because of their indirect build service.
 
 ## Run Orthanc on ARM
 
