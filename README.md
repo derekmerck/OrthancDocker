@@ -71,7 +71,7 @@ Specifically architected images can be directly pulled using the format `derekme
 
 - Rebase images on `resin/$ARCH-debian:stretch`
 - Specify `libssl1.0-dev`
-- Add [GDCM][]
+- Add [GDCM][] CLI tools
 - `orthanc-postgresql` code-base updated to `orthanc-databases`
 
 [GDCM]: http://gdcm.sourceforge.net/wiki/index.php/Main_Page

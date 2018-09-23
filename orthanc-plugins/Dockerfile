@@ -9,7 +9,12 @@ MAINTAINER Derek Merck <derek_merck@brown.edu>
 LABEL Description="X-Arch Orthanc, free DICOM server (plugins)" Vendor="The Orthanc project"
 
 RUN apt -y clean && apt -y update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install libgdcm2-dev libjpeg-dev postgresql-server-dev-all libtiff-dev libopenslide-dev
+RUN DEBIAN_FRONTEND=noninteractive apt -y install \
+    libgdcm2-dev \
+    libjpeg-dev \
+    postgresql-server-dev-all \
+    libtiff-dev \
+    libopenslide-dev \
   && apt -y clean \
   && rm -rf /var/lib/apt/lists/*
 
