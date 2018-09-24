@@ -74,6 +74,7 @@ Specifically architected images can be directly pulled using the format `derekme
 - Refactored into two-stage buiid with `orthanc-plugins` image based on `orthanc` image
 - Specified `libssl1.0-dev` in `orthanc` image
 - Added [GDCM][] CLI tools to `orthanc` image
+- Refactored command to leave entrypoint available
 - `orthanc-postgresql` code-base updated to `orthanc-databases` in `orthanc-plugins` image
 
 [GDCM]: http://gdcm.sourceforge.net/wiki/index.php/Main_Page
