@@ -1,9 +1,11 @@
-# X-Arch Orthanc Plugins
+# X-Arch Orthanc Plugin Image
 # Derek Merck, Fall 2018
 
 ARG ORX_ARCH="amd64"
-FROM derekmerck/orthanc-$ORX_ARCH
+# ARG ORX_ARCH="arm32v7"
+# ARG ORX_ARCH="arm64v8"
 
+FROM derekmerck/orthanc-$ORX_ARCH
 # MAINTAINER Sebastien Jodogne <s.jodogne@gmail.com>
 MAINTAINER Derek Merck <derek_merck@brown.edu>
 LABEL Description="X-Arch Orthanc, free DICOM server (plugins)" Vendor="The Orthanc project"
@@ -19,7 +21,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt -y install \
   && rm -rf /var/lib/apt/lists/*
 
 # libopenjpeg-dev doesn't exist for Debian Stretch and only exists in sid for amd64 and arm64 --
-# this is a bad habit, but probably ok for a Docker image where nothing will be updated
+# Manual forward porting is a bad habit, but probably ok for a Docker image where nothing will be updated
 RUN curl -O http://ftp.us.debian.org/debian/pool/main/o/openjpeg/libopenjpeg5_1.5.2-3_`dpkg --print-architecture`.deb \
   && curl -O http://ftp.us.debian.org/debian/pool/main/o/openjpeg/libopenjpeg-dev_1.5.2-3_`dpkg --print-architecture`.deb \
   && dpkg --install libopenjpeg5_1.5.2-3_`dpkg --print-architecture`.deb libopenjpeg-dev_1.5.2-3_`dpkg --print-architecture`.deb \
@@ -36,4 +38,3 @@ RUN bash /root/build-dicomweb.sh "default"
 
 ADD ./build-wsi.sh /root/build-wsi.sh
 RUN bash /root/build-wsi.sh "default"
-
