@@ -1,4 +1,4 @@
-#! python
+#! python3
 
 """
 manifest-it.py
@@ -6,7 +6,10 @@ Merck, Summer 2018
 
 Create manifest files for multi-arch images.
 
-Uses simple `manifest.yaml` description format:
+Platform Dependencies:  Docker
+Pip Dependencies:  pyyaml
+
+Uses a simple yaml architecture manifest description format:
 
 ---
 - image: "domain/master-image-name:tag"
@@ -30,10 +33,11 @@ Uses simple `manifest.yaml` description format:
         os: linux
 ---
 
-Note that armhf or arm32v7 is arch: arm, variant: v7, which makes sense, but is poorly documented.
-
-Acceptable architecture definitions are listed here:
+Other acceptable architecture definitions are listed here:
 https://raw.githubusercontent.com/docker-library/official-images/a7ad3081aa5f51584653073424217e461b72670a/bashbrew/go/vendor/src/github.com/docker-library/go-dockerlibrary/architecture/oci-platform.go
+
+Another good reference:
+https://lobradov.github.io/Building-docker-multiarch-images/#building-a-multi-arch-manifest
 
 All images must be present on the manifesting system or a partial master manifest will be created with missing references.
 
