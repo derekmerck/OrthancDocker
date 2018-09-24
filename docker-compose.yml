@@ -13,14 +13,14 @@ services:
     build:
       context: orthanc
       args:
-        ORX_ARCH:   arm32v7
+        RESIN_ARCH:   arm32v7
     image: derekmerck/orthanc-arm32v7
 
   orthanc-arm64v8:
     build:
       context: orthanc
       args:
-        ORX_ARCH:   arm64v8
+        RESIN_ARCH:   arm64v8
     image: derekmerck/orthanc-arm64v8
 
   # PLUG-IN IMAGES
