@@ -14,7 +14,7 @@
 
     - image: "derekmerck/orthanc-arm64v8:latest"
       platform:
-        architecture: arm
+        architecture: arm64
         variant: v8
         os: linux
 
@@ -34,6 +34,6 @@
 
     - image: "derekmerck/orthanc-plugins-arm64v8:latest"
       platform:
-        architecture: arm
+        architecture: arm64
         variant: v8
         os: linux

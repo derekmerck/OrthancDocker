@@ -25,7 +25,7 @@ Uses simple `manifest.yaml` description format:
 
     - image: "domain/arm64-image-name:tag"
       platform:
-        architecture: arm
+        architecture: arm64
         variant: v8
         os: linux
 ---
