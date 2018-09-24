@@ -1,7 +1,6 @@
-# safelist
 branches:
   only:
-    - system_python
+    - xarch
 
 dist: trusty
 language: python
@@ -50,8 +49,19 @@ after_success:
 
   # Login to docker for push
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push derekmerck/$SERVICE1-$ARCH_TAG
+  - docker push derekmerck/$SERVICE2-$ARCH_TAG
 
-  # TODO: I don't think that this works, the manifest ends up being ONLY these 2 services
-  # Need to build them _all_ in one instance
-  # manifest and push
-  - python3 manifest-it.py orthanc-xarch.manifest.yml
+#jobs:
+#  include:
+#    - stage: deploy
+#      script:
+#        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+#        - docker pull derekmerck/orthanc-amd64
+#        - docker pull derekmerck/orthanc-arm32v7
+#        - docker pull derekmerck/orthanc-arm64v8
+#        - docker pull derekmerck/orthanc-plugins-amd64
+#        - docker pull derekmerck/orthanc-plugins-arm32v7
+#        - docker pull derekmerck/orthanc-plugins-arm64v8
+#        - # manifest and push
+#        - python3 manifest-it.py orthanc-xarch.manifest.yml

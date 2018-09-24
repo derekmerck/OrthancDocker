@@ -8,7 +8,6 @@ ARG RESIN_ARCH="amd64"
 FROM resin/${RESIN_ARCH}-debian:stretch
 # MAINTAINER Sebastien Jodogne <s.jodogne@gmail.com>
 MAINTAINER Derek Merck <derek_merck@brown.edu>
-
 LABEL Description="X-Arch Orthanc, free DICOM server" Vendor="The Orthanc project"
 
 RUN apt -y clean && apt -y update && apt -y upgrade
