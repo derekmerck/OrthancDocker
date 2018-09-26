@@ -18,7 +18,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-
 set -e
 
 # Get the number of available cores to speed up the builds

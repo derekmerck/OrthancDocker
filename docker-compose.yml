@@ -7,39 +7,41 @@ services:
   orthanc-amd64:
     build:
       context: orthanc
-    image: derekmerck/orthanc-amd64
+    image: orthanc-amd64
 
   orthanc-arm32v7:
     build:
       context: orthanc
       args:
         RESIN_ARCH:   armv7hf
-    image: derekmerck/orthanc-arm32v7
+        DOCKER_ARCH:  arm32v7
+    image: orthanc-arm32v7
 
   orthanc-arm64v8:
     build:
       context: orthanc
       args:
         RESIN_ARCH:   aarch64
-    image: derekmerck/orthanc-arm64v8
+        DOCKER_ARCH:  arm64v8
+    image: orthanc-arm64v8
 
   # PLUG-IN IMAGES
 
   orthanc-plugins-amd64:
     build:
       context: orthanc-plugins
-    image: derekmerck/orthanc-plugins-amd64
+    image: orthanc-plugins-amd64
 
   orthanc-plugins-arm32v7:
     build:
       context: orthanc-plugins
       args:
-        ORX_ARCH:   arm32v7
-    image: derekmerck/orthanc-plugins-arm32v7
+        DOCKER_ARCH:  arm32v7
+    image: orthanc-plugins-arm32v7
 
   orthanc-plugins-arm64v8:
     build:
       context: orthanc-plugins
       args:
-        ORX_ARCH:   arm64v8
-    image: derekmerck/orthanc-plugins-arm64v8
+        DOCKER_ARCH:  arm64v8
+    image: orthanc-plugins-arm64v8

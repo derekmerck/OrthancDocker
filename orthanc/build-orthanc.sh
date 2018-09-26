@@ -49,12 +49,7 @@ cmake \
     -DUSE_SYSTEM_MONGOOSE=OFF \
     ..
 make -j$COUNT_CORES
-
-# To run the unit tests, we need to install the "en_US" locale
-locale-gen en_US
-locale-gen en_US.UTF-8
-update-locale
-# ./UnitTests
+./UnitTests
 
 # Install the Orthanc core
 make install
