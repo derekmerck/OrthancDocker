@@ -10,14 +10,14 @@ Build multi-architecture [Orthanc](https://www.orthanc-server.com) DICOM-node Do
 
 ## Overview
 
-Orthanc is developed and maintained by Sebastien Jodogne. Full documentation is available in the [Orthanc Book](http://book.orthanc-server.com/users/docker.html).
+Orthanc is developed and maintained by Sébastien Jodogne. Full documentation is available in the [Orthanc Book](http://book.orthanc-server.com/users/docker.html).  This image builds the most recent default/mainline release version of Orthanc.
 
 This image is based on the `resin/$ARCH-debian:stretch` image.  [Resin.io][] base images include the [QEMU][] cross-compiler to facilitate building images for low-power single-board computers while using more powerful Intel-architecture compute servers.
 
 [Resin.io]: http://resin.io
 [QEMU]: https://www.qemu.org
 
-This branch supports builds for `amd64`, `armhf`/`arm32v7`, and `aarch64`/`arm64v8` architectures.  Most low-power single board computers such as the [Raspberry Pi][] and [Beagleboard][] are `armhf`/`arm32v7` devices.  The [Pine64][] and [NVIDIA Jetson][] are `aarch64`/`arm64v8` devices.
+This supports builds for `amd64`, `armhf`/`arm32v7`, and `aarch64`/`arm64v8` architectures.  Most low-power single board computers such as the [Raspberry Pi][] and [Beagleboard][] are `armhf`/`arm32v7` devices.  The [Pine64][] and [NVIDIA Jetson][] are `aarch64`/`arm64v8` devices.
 
 [Raspberry Pi]: https://www.raspberrypi.org
 [Beagleboard]: http://beagleboard.org
@@ -46,7 +46,8 @@ $ docker run --rm --privileged multiarch/qemu-user-static:register --reset
 $ docker-compose build orthanc-amd64 orthanc-arm32v7 orthanc-arm64v8
 $ docker-compose bulid orthanc-plugins-amd64 orthanc-plugins-arm32v7 orthanc-plugins-arm64v8
 $ mkdir -p $HOME/.docker && echo '{"experimental":"enabled"}' > "$HOME/.docker/config.json"
-$ python3 manifest-it.py xarch-orthanc.manifest.yml
+$ python3 docker-manifest.py --d derekmerck orthanc
+$ python3 docker-manifest.py --d derekmerck orthanc-plugins
 ```
 
 An automation pipeline for image generation and tagging is demonstrated in the `.travis.yml` script.  However, the cross-compiling jobs exceed Travis' 50-minute timeout window, so builds are currently triggered by hand.
@@ -55,6 +56,8 @@ An automation pipeline for image generation and tagging is demonstrated in the `
 ## Pull
 
 Images are _theoretically_ manifested per modern Docker.io guidelines so that an appropriately architected image be will automatically selected for a given tag depending on the pulling architecture.
+
+Images can be pulled from:
 
 ```bash
 $ docker pull derekmerck/orthanc
@@ -77,15 +80,19 @@ Specifically architected images can be directly pulled using the format `derekme
 
 On-board embedded AI is the future of medical imaging!  Orthanc provides a vital, robust bridge between modality generated DICOM and modern data indexing and analysis.
 
+This image is also drop-in compatible with the [derekmerck.orthanc-docker](https://github.com/derekmerck/ansible-orthanc-docker) [Ansible][] role, enabling quick configuration of complex DICOM infrastructures on ARM data center equipment.
+
+[Ansible]: https://www.ansible.com
 
 ## Changes
 
 - Rebased from `_/ubuntu:14` to `resin/$ARCH-debian:stretch`
-- Refactored into two-stage buiid with `orthanc-plugins` image based on `orthanc` image
+- Set the locale using Debian-friendly method (see https://unix.stackexchange.com/questions/246846/cant-generate-en-us-utf-8-locale)
+- Refactored into two-stage build, with `orthanc-plugins` image based on `orthanc` image
 - Specified `libssl1.0-dev` in `orthanc` image
 - Added [GDCM][] CLI tools to `orthanc` image
-- Refactored command to leave entrypoint available
-- `orthanc-postgresql` code-base updated to `orthanc-databases` in `orthanc-plugins` image
+- Refactored command to Orthanc and left entrypoint available for init
+- `orthanc-postgresql` code-base updated to use `orthanc-databases` in `orthanc-plugins` image
 
 [GDCM]: http://gdcm.sourceforge.net/wiki/index.php/Main_Page
 

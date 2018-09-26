@@ -1,14 +1,12 @@
 # X-Arch Orthanc Plugin Image
 # Derek Merck, Fall 2018
 
-ARG ORX_ARCH="amd64"
-# ARG ORX_ARCH="arm32v7"
-# ARG ORX_ARCH="arm64v8"
+ARG DOCKER_ARCH="amd64"
+# ARG DOCKER_ARCH="arm32v7"
+# ARG DOCKER_ARCH="arm64v8"
 
-FROM derekmerck/orthanc-$ORX_ARCH
-# MAINTAINER Sebastien Jodogne <s.jodogne@gmail.com>
-MAINTAINER Derek Merck <derek_merck@brown.edu>
-LABEL Description="X-Arch Orthanc, free DICOM server (plugins)" Vendor="The Orthanc project"
+FROM orthanc-$DOCKER_ARCH
+LABEL description="X-Arch Orthanc, free cross-platform DICOM server (plugins)"
 
 RUN apt -y clean && apt -y update
 RUN DEBIAN_FRONTEND=noninteractive apt -y install \

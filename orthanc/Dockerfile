@@ -6,9 +6,18 @@ ARG RESIN_ARCH="amd64"
 #ARG RESIN_ARCH="aarch64"
 
 FROM resin/${RESIN_ARCH}-debian:stretch
-# MAINTAINER Sebastien Jodogne <s.jodogne@gmail.com>
-MAINTAINER Derek Merck <derek_merck@brown.edu>
-LABEL Description="X-Arch Orthanc, free DICOM server" Vendor="The Orthanc project"
+
+ARG DOCKER_ARCH="amd64"
+# ARG DOCKER_ARCH="arm32v7"
+# ARG DOCKER_ARCH="arm64v8"
+
+LABEL maintainer="Derek Merck"
+LABEL email="derek_merck@brown.edu"
+LABEL maintainer2="Sebastien Jodogne"
+LABEL description="X-Arch Orthanc, free cross-platform DICOM server"
+LABEL vendor="The Orthanc project"
+LABEL architecture="$DOCKER_ARCH"
+LABEL os="linux"
 
 RUN apt -y clean && apt -y update && apt -y upgrade
 RUN DEBIAN_FRONTEND=noninteractive apt -y install \
@@ -37,6 +46,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt -y install \
     locales \
   && apt -y clean \
   && rm -rf /var/lib/apt/lists/*
+
+RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && locale-gen
 
 ADD ./build-orthanc.sh /root/build-orthanc.sh
 RUN bash /root/build-orthanc.sh "default"
