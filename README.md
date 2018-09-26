@@ -24,7 +24,7 @@ $ docker pull derekmerck/orthanc
 $ docker pull derekmerck/orthanc-plugins
 ```
 
-Images for specific architectures images can be directly pulled from the same namespace using the format `derekmerck/orthanc:tag-{arch}`, where `arch` is one of `amd64`, `arm32v7`, or `arm64v8`.  Explicit architecture specification is sometimes helpful when an indirect build service shadows the production architecture.
+Images for specific architectures images can be directly pulled from the same namespace using the format `derekmerck/orthanc:{tag}-{arch}`, where `arch` is one of `amd64`, `arm32v7`, or `arm64v8`.  Explicit architecture specification is sometimes helpful when an indirect build service shadows the production architecture.
 
 
 ## Build It
@@ -67,13 +67,13 @@ A [Travis][] automation pipeline for git-push-triggered image regeneration and t
 
 ## Run Orthanc on ARM
 
-[Packet.net][] rents bare-metal 96-core 128GB `aarch64` [Cavium ThunderX] servers for $0.50/hour.  Packet's affiliated [Works On Arm][] program provided compute time for developing and testing these cross-platform images.
+If you need access to an ARM device for development, [Packet.net][] rents bare-metal 96-core 128GB `aarch64` [Cavium ThunderX] servers for $0.50/hour.  Packet's affiliated [Works On Arm][] program provided compute time for developing and testing these cross-platform images.
 
 [Cavium ThunderX]: https://www.cavium.com/product-thunderx-arm-processors.html
 [Packet.net]: https://packet.net
 [Works On Arm]: https://www.worksonarm.com
 
-You can confirm that the appropriate image has been pulled by starting a container with the command `arch`.  
+Setup your ARM device with Docker and pull the image tag. You can confirm that the appropriate image has been pulled by starting a container with the command `arch`.  
 
 ```bash
 $ docker pull derekmerck/orthanc
@@ -85,7 +85,7 @@ $ docker run derekmerck/orthanc arch
 aarch64
 ```
 
-You can also check the image architecture without running it by inspecting the value of `.Config.Labels.architecture`.  (This is a creator-defined label that is _different_ than the normal `.Architecture` key -- which appears to _always_ report as `amd64`.)
+You can also confirm the image architecture without running a container by inspecting the value of `.Config.Labels.architecture`.  (This is a creator-defined label that is _different_ than the normal `.Architecture` key -- which appears to _always_ report as `amd64`.)
 
 ```bash
 $ docker inspect derekmerck/orthanc --format "{{ .Config.Labels.architecture }}"
