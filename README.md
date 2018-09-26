@@ -7,6 +7,8 @@ Providence, RI
 
 Build multi-architecture [Orthanc](https://www.orthanc-server.com) DICOM-node Docker images.
 
+source: <https://github.com/derekmerck/docker-orthanc-xarch>
+
 
 ## Overview
 
