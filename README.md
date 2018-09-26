@@ -10,9 +10,26 @@ Build multi-architecture [Orthanc](https://www.orthanc-server.com) DICOM-node Do
 
 ## Overview
 
-Orthanc is developed and maintained by Sébastien Jodogne. Full documentation is available in the [Orthanc Book](http://book.orthanc-server.com/users/docker.html).  This image builds the most recent default/mainline release version of Orthanc.
+Orthanc is developed and maintained by Sébastien Jodogne. Full documentation is available in the [Orthanc Book](http://book.orthanc-server.com/users/docker.html).  This branch builds the most recent default/mainline release version of Orthanc.
 
-This image is based on the `resin/$ARCH-debian:stretch` image.  [Resin.io][] base images include the [QEMU][] cross-compiler to facilitate building images for low-power single-board computers while using more powerful Intel-architecture compute servers.
+
+## Use It
+
+These images are manifested per modern Docker.io guidelines so that an appropriately architected image can be will automatically selected for a given tag depending on the pulling architecture.
+
+Images can be pulled from:
+
+```bash
+$ docker pull derekmerck/orthanc
+$ docker pull derekmerck/orthanc-plugins
+```
+
+Images for specific architectures images can be directly pulled from the same namespace using the format `derekmerck/orthanc:tag-{arch}`, where `arch` is one of `amd64`, `arm32v7`, or `arm64v8`.  Explicit architecture specification is sometimes helpful when an indirect build service shadows the production architecture.
+
+
+## Build It
+
+These images are based on the cross-platform `resin/$ARCH-debian:stretch` image.  [Resin.io][] base images include the [QEMU][] cross-compiler to facilitate building Docker images for low-power single-board computers while using more powerful Intel-architecture compute servers.
 
 [Resin.io]: http://resin.io
 [QEMU]: https://www.qemu.org
@@ -24,74 +41,68 @@ This supports builds for `amd64`, `armhf`/`arm32v7`, and `aarch64`/`arm64v8` arc
 [Pine64]: https://www.pine64.org
 [NVIDIA Jetson]: https://developer.nvidia.com/embedded/buy/jetson-tx2
 
-
-## Build
-
-`docker-compose.yml` contains build recipes for all relevant architectures.  We cannot use `depends_on` for build dependencies in `docker-compose`, so the vanilla `orthanc` image must explicitly built before the `orthanc-plugins` image that is based on it.
-
-```bash
-$ docker-compose build orthanc-amd64 orthanc-plugins-amd64
-```
+`docker-compose.yml` contains build recipes for all relevant architectures for both a vanilla `orthanc` image as well as `orthanc-plugins`.  `orthanc-plugins` is based on `orthanc`, but since we cannot define build dependencies in a compose file (strangely, `depends_on` only works with `run` or `up`), the vanilla `orthanc` image must be explicitly built before the `orthanc-plugins` image.
 
 To build all images:
 
 1. Register the Docker QEMU cross-compilers
 2. Call `docker-compose` to build the vanilla `orthanc` images
 3. Call `docker-compose` to build the `orthanc-plugin` images
-4. Put Docker into experimental mode for manifest creation, if it is not already
-5. Finally, call `manifest-it.py` to manifest and push the image sets (you will need to edit the compose and manifest files to point at your own Docker domain).
+4. Put Docker into "experimental mode" for manifest creation, if it is not already
+5. Finally, call `docker-manifest.py` with an appropriate domain to manifest and push the image sets
 
 ```bash
 $ docker run --rm --privileged multiarch/qemu-user-static:register --reset
 $ docker-compose build orthanc-amd64 orthanc-arm32v7 orthanc-arm64v8
 $ docker-compose bulid orthanc-plugins-amd64 orthanc-plugins-arm32v7 orthanc-plugins-arm64v8
 $ mkdir -p $HOME/.docker && echo '{"experimental":"enabled"}' > "$HOME/.docker/config.json"
-$ python3 docker-manifest.py --d derekmerck orthanc
-$ python3 docker-manifest.py --d derekmerck orthanc-plugins
+$ python3 docker-manifest.py --d $DOCKER_USERNAME orthanc
+$ python3 docker-manifest.py --d $DOCKER_USERNAME orthanc-plugins
 ```
 
-An automation pipeline for image generation and tagging is demonstrated in the `.travis.yml` script.  However, the cross-compiling jobs exceed Travis' 50-minute timeout window, so builds are currently triggered by hand.
+An automation pipeline for git-push-triggered image regeneration and tagging is demonstrated in the `.travis.yml` script.  However, these cross-compiling jobs exceed the [Travis][] 50-minute timeout window, so builds are currently done by hand on cloud infrastructure.
 
-
-## Pull
-
-Images are _theoretically_ manifested per modern Docker.io guidelines so that an appropriately architected image be will automatically selected for a given tag depending on the pulling architecture.
-
-Images can be pulled from:
-
-```bash
-$ docker pull derekmerck/orthanc
-$ docker pull derekmerck/orthanc-plugins
-```
-
-Specifically architected images can be directly pulled using the format `derekmerck/orthanc{-plugins}{-arch}{:tag}`, where `arch` is one of `amd64`, `arm32v7`, or `arm64v8`.  Such explicit architecture specification is necessary on Resin hosts because their indirect build service shadows the production architecture.
+[Travis]: http://travis-ci.org
 
 
 ## Run Orthanc on ARM
 
-[Packet.net][] rents bare-metal 96-core `aarch64` [Cavium ThunderX] servers for $0.50/hour.  Packet's affiliated [Works On Arm][] program provided build-time for developing this branch.
+[Packet.net][] rents bare-metal 96-core `aarch64` [Cavium ThunderX] servers for $0.50/hour.  Packet's affiliated [Works On Arm][] program provided build-time for developing these cross-platform images.
 
 [Cavium ThunderX]: https://www.cavium.com/product-thunderx-arm-processors.html
 [Packet.net]: https://packet.net
 [Works On Arm]: https://www.worksonarm.com
 
+You can confirm that the appropriate image has been pulled by inspecting the value of `.Config.Labels.architecture`.  Note this is creator-defined label that is _different_ than the `.Architecture` key -- which appears to _always_ report as `amd64`.
+
+```bash
+$ docker pull derekmerck/orthanc
+Using default tag: latest
+latest: Pulling from derekmerck/orthanc
+Digest: sha256:1975e3a92cf9099284fc3bb2d05d3cf081d49babfd765f96f745cf8a23668ff6
+Status: Downloaded newer image for derekmerck/orthanc:latest
+$ docker inspect derekmerck/orthanc --format "{{ .Config.Labels.architecture }}"
+arm64v8
+```
+
 
 ## Why Bother?
 
-On-board embedded AI is the future of medical imaging!  Orthanc provides a vital, robust bridge between modality generated DICOM and modern data indexing and analysis.
+On-board embedded AI is the future of medical imaging!  Orthanc provides a vital, robust bridge between modality-generated DICOM and modern data indexing and analysis.
 
-This image is also drop-in compatible with the [derekmerck.orthanc-docker](https://github.com/derekmerck/ansible-orthanc-docker) [Ansible][] role, enabling quick configuration of complex DICOM infrastructures on ARM data center equipment.
+This image is drop-in compatible with the [derekmerck.orthanc-docker](https://github.com/derekmerck/ansible-orthanc-docker) [Ansible][] role, enabling quick configuration of complex DICOM infrastructures on ARM data center equipment.
 
 [Ansible]: https://www.ansible.com
+
 
 ## Changes
 
 - Rebased from `_/ubuntu:14` to `resin/$ARCH-debian:stretch`
-- Set the locale using Debian-friendly method (see https://unix.stackexchange.com/questions/246846/cant-generate-en-us-utf-8-locale)
+- Set locale using a [Debian-friendly method](https://unix.stackexchange.com/questions/246846/cant-generate-en-us-utf-8-locale)
 - Refactored into two-stage build, with `orthanc-plugins` image based on `orthanc` image
 - Specified `libssl1.0-dev` in `orthanc` image
 - Added [GDCM][] CLI tools to `orthanc` image
-- Refactored command to Orthanc and left entrypoint available for init
+- Refactored `command` to `Orthanc` and left `entrypoint` available for init process
 - `orthanc-postgresql` code-base updated to use `orthanc-databases` in `orthanc-plugins` image
 
 [GDCM]: http://gdcm.sourceforge.net/wiki/index.php/Main_Page

@@ -1,4 +1,5 @@
-# Disabled - amd64 build ~30 minutes, arm builds ~300 minutes?
+# Disabled - cross-arch build time > 50 mins on Travis VMs
+
 branches:
   only:
     - xarch
@@ -33,7 +34,7 @@ before_install:
   - mkdir -p $HOME/.docker
   - echo '{"experimental":"enabled"}' > "$HOME/.docker/config.json"
 
-  - pip3 install pyyaml  # for manifest-it
+  - pip3 install pyyaml  # for docker-manifest
 
     # Register qemu as cross-compiler
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
@@ -41,8 +42,7 @@ before_install:
 install:
 
   # Build image
-  - docker-compose build $SERVICE1-$ARCH_TAG
-  - docker-compose build $SERVICE2-$ARCH_TAG
+  - docker-compose build $SERVICE1-$ARCH_TAG $SERVICE2-$ARCH_TAG
 
 script: true
 
@@ -50,20 +50,14 @@ after_success:
 
   # Login to docker for push
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker push $DOCKER_USERNAME/$SERVICE1-$ARCH_TAG
-  - docker push $DOCKER_USERNAME/$SERVICE2-$ARCH_TAG
+  - docker tag $SERVICE1-$ARCH_TAG $DOCKER_USERNAME/$SERVICE1:latest-$ARCH_TAG
+  - docker push $DOCKER_USERNAME/$SERVICE1:latest-$ARCH_TAG
+  - docker tag $SERVICE2-$ARCH_TAG $DOCKER_USERNAME/$SERVICE2:latest-$ARCH_TAG
+  - docker push $DOCKER_USERNAME/$SERVICE2:latest-$ARCH_TAG
 
 jobs:
   include:
     - stage: deploy
       script:
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        # Pull all of the outputs -- this stage does not have access to the build-stage Docker image cache
-        - docker pull $DOCKER_USERNAME/orthanc-amd64
-        - docker pull $DOCKER_USERNAME/orthanc-arm32v7
-        - docker pull $DOCKER_USERNAME/orthanc-arm64v8
-        - docker pull $DOCKER_USERNAME/orthanc-plugins-amd64
-        - docker pull $DOCKER_USERNAME/orthanc-plugins-arm32v7
-        - docker pull $DOCKER_USERNAME/orthanc-plugins-arm64v8
-        - # Create a master manifest and push
-        - python3 manifest-it.py orthanc-xarch.manifest.yml
+        - python3 docker-manifest.py -d $DOCKER_USERNAME orthanc orthanc-plugins
