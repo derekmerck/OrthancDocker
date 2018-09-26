@@ -12,7 +12,7 @@ Build multi-architecture [Orthanc](https://www.orthanc-server.com) DICOM-node Do
 
 Orthanc is developed and maintained by Sébastien Jodogne. Full documentation is available in the [Orthanc Book](http://book.orthanc-server.com/users/docker.html).  
 
-This repo is a fork of Sébastien Jodogne's [OrthancDocker](https://github.com/jodogne/OrthancDocker) project.  The new `xarch` branch builds images for the most recent default/mainline release version of Orthanc.  These images are manifested per modern Docker.io guidelines so that an appropriately architected image can be will automatically selected for a given tag depending on the pulling architecture.
+This repo is a fork of Jodogne's [OrthancDocker](https://github.com/jodogne/OrthancDocker) project.  The `xarch` branch creates cross-architecture Docker images for the most recent default/mainline release version of Orthanc.  These images are manifested per modern Docker.io guidelines so that an appropriately architected image can be will automatically selected for a given tag depending on the pulling architecture.
 
 
 ## Use It
@@ -41,7 +41,7 @@ This supports builds for `amd64`, `armhf`/`arm32v7`, and `aarch64`/`arm64v8` arc
 [Pine64]: https://www.pine64.org
 [NVIDIA Jetson]: https://developer.nvidia.com/embedded/buy/jetson-tx2
 
-`docker-compose.yml` contains build recipes for all relevant architectures for both a vanilla `orthanc` image as well as `orthanc-plugins`.  `orthanc-plugins` is based on `orthanc`, but since we cannot define build dependencies in a compose file (strangely, `depends_on` only works with `run` or `up`), the vanilla `orthanc` image must be explicitly built before the `orthanc-plugins` image.
+`docker-compose.yml` contains build recipes for each architecture for both a vanilla `orthanc` image and an `orthanc-plugins` image.  `orthanc-plugins` is based on `orthanc`, but since we cannot define build dependencies in a compose file (strangely, `depends_on` only works with `run` or `up`), the vanilla `orthanc` image must be explicitly built before the `orthanc-plugins` image.
 
 To build all images:
 
@@ -60,20 +60,20 @@ $ python3 docker-manifest.py --d $DOCKER_USERNAME orthanc
 $ python3 docker-manifest.py --d $DOCKER_USERNAME orthanc-plugins
 ```
 
-An automation pipeline for git-push-triggered image regeneration and tagging is demonstrated in the `.travis.yml` script.  However, these cross-compiling jobs exceed the [Travis][] 50-minute timeout window, so builds are currently done by hand on cloud infrastructure.
+A [Travis][] automation pipeline for git-push-triggered image regeneration and tagging is demonstrated in the `.travis.yml` script.  However, these cross-compiling jobs exceed Travis' 50-minute timeout window, so builds are currently done by hand using cloud infrastructure.
 
 [Travis]: http://travis-ci.org
 
 
 ## Run Orthanc on ARM
 
-[Packet.net][] rents bare-metal 96-core `aarch64` [Cavium ThunderX] servers for $0.50/hour.  Packet's affiliated [Works On Arm][] program provided build-time for developing and testing these cross-platform images.
+[Packet.net][] rents bare-metal 96-core 128GB `aarch64` [Cavium ThunderX] servers for $0.50/hour.  Packet's affiliated [Works On Arm][] program provided compute time for developing and testing these cross-platform images.
 
 [Cavium ThunderX]: https://www.cavium.com/product-thunderx-arm-processors.html
 [Packet.net]: https://packet.net
 [Works On Arm]: https://www.worksonarm.com
 
-You can confirm that the appropriate image has been pulled by inspecting the value of `.Config.Labels.architecture`.  (Note this is a creator-defined label that is _different_ than the `.Architecture` key -- which appears to _always_ report as `amd64`.)
+You can confirm that the appropriate image has been pulled by starting a container with the command `arch`.  
 
 ```bash
 $ docker pull derekmerck/orthanc
@@ -81,6 +81,13 @@ Using default tag: latest
 latest: Pulling from derekmerck/orthanc
 Digest: sha256:1975e3a92cf9099284fc3bb2d05d3cf081d49babfd765f96f745cf8a23668ff6
 Status: Downloaded newer image for derekmerck/orthanc:latest
+$ docker run derekmerck/orthanc arch
+aarch64
+```
+
+You can also check the image architecture without running it by inspecting the value of `.Config.Labels.architecture`.  (This is a creator-defined label that is _different_ than the normal `.Architecture` key -- which appears to _always_ report as `amd64`.)
+
+```bash
 $ docker inspect derekmerck/orthanc --format "{{ .Config.Labels.architecture }}"
 arm64v8
 ```
