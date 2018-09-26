@@ -10,12 +10,12 @@ Build multi-architecture [Orthanc](https://www.orthanc-server.com) DICOM-node Do
 
 ## Overview
 
-Orthanc is developed and maintained by Sébastien Jodogne. Full documentation is available in the [Orthanc Book](http://book.orthanc-server.com/users/docker.html).  This branch builds the most recent default/mainline release version of Orthanc.
+Orthanc is developed and maintained by Sébastien Jodogne. Full documentation is available in the [Orthanc Book](http://book.orthanc-server.com/users/docker.html).  
+
+This repo is a fork of Sébastien Jodogne's [OrthancDocker](https://github.com/jodogne/OrthancDocker) project.  The new `xarch` branch builds images for the most recent default/mainline release version of Orthanc.  These images are manifested per modern Docker.io guidelines so that an appropriately architected image can be will automatically selected for a given tag depending on the pulling architecture.
 
 
 ## Use It
-
-These images are manifested per modern Docker.io guidelines so that an appropriately architected image can be will automatically selected for a given tag depending on the pulling architecture.
 
 Images can be pulled from:
 
@@ -48,8 +48,8 @@ To build all images:
 1. Register the Docker QEMU cross-compilers
 2. Call `docker-compose` to build the vanilla `orthanc` images
 3. Call `docker-compose` to build the `orthanc-plugin` images
-4. Put Docker into "experimental mode" for manifest creation, if it is not already
-5. Finally, call `docker-manifest.py` with an appropriate domain to manifest and push the image sets
+4. Put Docker into "experimental mode" for manifest creation
+5. Call `docker-manifest.py` with an appropriate domain to manifest and push the images
 
 ```bash
 $ docker run --rm --privileged multiarch/qemu-user-static:register --reset
@@ -67,13 +67,13 @@ An automation pipeline for git-push-triggered image regeneration and tagging is 
 
 ## Run Orthanc on ARM
 
-[Packet.net][] rents bare-metal 96-core `aarch64` [Cavium ThunderX] servers for $0.50/hour.  Packet's affiliated [Works On Arm][] program provided build-time for developing these cross-platform images.
+[Packet.net][] rents bare-metal 96-core `aarch64` [Cavium ThunderX] servers for $0.50/hour.  Packet's affiliated [Works On Arm][] program provided build-time for developing and testing these cross-platform images.
 
 [Cavium ThunderX]: https://www.cavium.com/product-thunderx-arm-processors.html
 [Packet.net]: https://packet.net
 [Works On Arm]: https://www.worksonarm.com
 
-You can confirm that the appropriate image has been pulled by inspecting the value of `.Config.Labels.architecture`.  Note this is creator-defined label that is _different_ than the `.Architecture` key -- which appears to _always_ report as `amd64`.
+You can confirm that the appropriate image has been pulled by inspecting the value of `.Config.Labels.architecture`.  (Note this is a creator-defined label that is _different_ than the `.Architecture` key -- which appears to _always_ report as `amd64`.)
 
 ```bash
 $ docker pull derekmerck/orthanc
@@ -88,21 +88,21 @@ arm64v8
 
 ## Why Bother?
 
-On-board embedded AI is the future of medical imaging!  Orthanc provides a vital, robust bridge between modality-generated DICOM and modern data indexing and analysis.
+On-board embedded AI is the future of medical imaging!  Orthanc provides a vital, robust bridge between modality-generated DICOM and modern data indexing and analysis algorithms.
 
-This image is drop-in compatible with the [derekmerck.orthanc-docker](https://github.com/derekmerck/ansible-orthanc-docker) [Ansible][] role, enabling quick configuration of complex DICOM infrastructures on ARM data center equipment.
+This image is also drop-in compatible with the [derekmerck.orthanc-docker](https://github.com/derekmerck/ansible-orthanc-docker) [Ansible][] role, facilitating quick configuration of complex DICOM infrastructures on ARM data center equipment.
 
 [Ansible]: https://www.ansible.com
 
 
 ## Changes
 
-- Rebased from `_/ubuntu:14` to `resin/$ARCH-debian:stretch`
+- Rebased images from `_/ubuntu:14` to `resin/$ARCH-debian:stretch`
 - Set locale using a [Debian-friendly method](https://unix.stackexchange.com/questions/246846/cant-generate-en-us-utf-8-locale)
 - Refactored into two-stage build, with `orthanc-plugins` image based on `orthanc` image
 - Specified `libssl1.0-dev` in `orthanc` image
 - Added [GDCM][] CLI tools to `orthanc` image
-- Refactored `command` to `Orthanc` and left `entrypoint` available for init process
+- Refactored `command` to leave `entrypoint` available for init process
 - `orthanc-postgresql` code-base updated to use `orthanc-databases` in `orthanc-plugins` image
 
 [GDCM]: http://gdcm.sourceforge.net/wiki/index.php/Main_Page
