@@ -10,27 +10,32 @@ Platform Dependencies:  Docker
 Pip Dependencies:  pyyaml
 
 docker-compose.yml services name keys should be formatted "{service}-{arch}", and arch should be
-included in a "DOCKER_ARCH" build arg.
----
+included in a "DOCKER_ARCH" build arg.  For example,
+
+```yaml
 services:
   my_service-amd64:
     build:
       args:
         DOCKER_ARCH: amd64
----
+    image: my_image
+```
 
-This will register as a service definition with basename "my_service" and architecture "amd64".
-Architectures may be any one of amd64, arm32v7, or arm64v8.
+This would register as a service definition with basename "my_service" and architecture "amd64".
+Architectures may be any one of `amd64`, `arm32v7`, or `arm64v8`.
+
+`$ docker-manifest -d domain my_service` would retag the output image `my_image` as
+`domain/my_service:tag-amd64` and link it to `domain/my_service:tag` on docker.io.
 
 Acceptable architecture definitions are listed here:
 https://raw.githubusercontent.com/docker-library/official-images/a7ad3081aa5f51584653073424217e461b72670a/bashbrew/go/vendor/src/github.com/docker-library/go-dockerlibrary/architecture/oci-platform.go
 
-A good reference for docker manifest files:
+A good reference for manipulating docker manifest lists:
 https://lobradov.github.io/Building-docker-multiarch-images/#building-a-multi-arch-manifest
 
-All images should be present on the manifesting system or a partial master manifest will be created with missing references.
-
-TODO: could have this just read the compose file and try to do all services if possible, or take a list of services from the command line
+All images should be present in docker.io/my_namespace (not just locally) when the manifest is
+created, or the script will report failures and no manifest will be created.  Any locally available
+images will be retagged and pushed as part of this script when possible.
 """
 
 import yaml, logging, os, shutil
@@ -58,6 +63,7 @@ def docker_push_manifest(manifest):
         call(cmd)
 
 def docker_manifest_create(manifest, aliases):
+    # There is no "manifest remove" function, only "amend", so clean manually
     fp = os.path.expandvars( "$HOME/.docker/manifests/docker.io_{domain}_{service}-{tag}".format(
         domain=opts.domain,
         service=opts.service,
@@ -92,7 +98,7 @@ def parse_args():
     p.add_argument("-t", "--tag", default="latest",
                    help="docker image tag (default: %(default)s)")
     p.add_argument('--dryrun', action="store_true",
-                   help="Retag images and create manifest, but do not push")
+                   help="Retag images and create manifest, but do not push (will report failures)")
     p.add_argument("service", help="service base name")
 
     opts = p.parse_args()
