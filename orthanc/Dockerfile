@@ -20,7 +20,7 @@ LABEL architecture="$DOCKER_ARCH"
 LABEL os="linux"
 
 RUN apt -y clean && apt -y update && apt -y upgrade
-RUN DEBIAN_FRONTEND=noninteractive apt -y install \
+RUN DEBIAN_FRONTEND=noninteractive apt -y install --no-install-recommends \
     wget \
     nano \
     build-essential \

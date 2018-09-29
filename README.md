@@ -26,12 +26,12 @@ $ docker pull derekmerck/orthanc
 $ docker pull derekmerck/orthanc-plugins
 ```
 
-Images for specific architectures images can be directly pulled from the same namespace using the format `derekmerck/orthanc:{tag}-{arch}`, where `arch` is one of `amd64`, `arm32v7`, or `arm64v8`.  Explicit architecture specification is sometimes helpful when an indirect build service shadows the production architecture.
+Images for specific architectures images can be directly pulled from the same namespace using the format `derekmerck/orthanc:${TAG}-${ARCH}`, where `$ARCH` is one of `amd64`, `arm32v7`, or `arm64v8`.  Explicit architecture specification is sometimes helpful when an indirect build service shadows the production architecture.
 
 
 ## Build It
 
-These images are based on the cross-platform `resin/$ARCH-debian:stretch` image.  [Resin.io][] base images include the [QEMU][] cross-compiler to facilitate building Docker images for low-power single-board computers while using more powerful Intel-architecture compute servers.
+These images are based on the cross-platform `resin/${ARCH}-debian:stretch` image.  [Resin.io][] base images include the [QEMU][] cross-compiler to facilitate building Docker images for low-power single-board computers while using more powerful Intel-architecture compute servers.
 
 [Resin.io]: http://resin.io
 [QEMU]: https://www.qemu.org
