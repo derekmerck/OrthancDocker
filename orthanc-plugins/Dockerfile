@@ -9,7 +9,7 @@ FROM orthanc-$DOCKER_ARCH
 LABEL description="X-Arch Orthanc, free cross-platform DICOM server (plugins)"
 
 RUN apt -y clean && apt -y update
-RUN DEBIAN_FRONTEND=noninteractive apt -y install \
+RUN DEBIAN_FRONTEND=noninteractive apt -y install --no-install-recommends \
     libgdcm2-dev \
     libjpeg-dev \
     postgresql-server-dev-all \
