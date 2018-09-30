@@ -22,8 +22,8 @@ This repo is a fork of Jodogne's [OrthancDocker](https://github.com/jodogne/Orth
 Images can be pulled from:
 
 ```bash
-$ docker pull derekmerck/orthanc
-$ docker pull derekmerck/orthanc-plugins
+$ docker run derekmerck/orthanc          # (latest-amd64, latest-arm32v7, latest-arm64v8)
+$ docker run derekmerck/orthanc-plugins  # (latest-amd64, latest-arm32v7, latest-arm64v8)
 ```
 
 Images for specific architectures images can be directly pulled from the same namespace using the format `derekmerck/orthanc:${TAG}-${ARCH}`, where `$ARCH` is one of `amd64`, `arm32v7`, or `arm64v8`.  Explicit architecture specification is sometimes helpful when an indirect build service shadows the production architecture.
@@ -36,8 +36,10 @@ These images are based on the cross-platform `resin/${ARCH}-debian:stretch` imag
 [Resin.io]: http://resin.io
 [QEMU]: https://www.qemu.org
 
-This supports builds for `amd64`, `armhf`/`arm32v7`, and `aarch64`/`arm64v8` architectures.  Most low-power single board computers such as the [Raspberry Pi][] and [Beagleboard][] are `armhf`/`arm32v7` devices.  The [Pine64][] and [NVIDIA Jetson][] are `aarch64`/`arm64v8` devices.
+This supports builds for `amd64`, `armhf`/`arm32v7`, and `aarch64`/`arm64v8` architectures.  Most low-power single board computers such as the [Raspberry Pi][] and [Beagleboard][] are `armhf`/`arm32v7` devices.  The [Pine64][] and [NVIDIA Jetson][] are `aarch64`/`arm64v8` devices.  Desktop computers/vms, [UP boards][], and the [Intel NUC][] are `amd64` devices.  
 
+[UP boards]: http://www.up-board.org/upcore/
+[Intel NUC]: https://www.intel.com/content/www/us/en/products/boards-kits/nuc.html
 [Raspberry Pi]: https://www.raspberrypi.org
 [Beagleboard]: http://beagleboard.org
 [Pine64]: https://www.pine64.org
@@ -50,16 +52,20 @@ To build all images:
 1. Register the Docker QEMU cross-compilers
 2. Call `docker-compose` to build the vanilla `orthanc` images
 3. Call `docker-compose` to build the `orthanc-plugin` images
-4. Put Docker into "experimental mode" for manifest creation
-5. Call `docker-manifest.py` with an appropriate domain to manifest and push the images
+4. Get [docker-manifest][] from Github
+5. Put Docker into "experimental mode" for manifest creation
+6. Call `docker-manifest.py` with an appropriate domain to manifest and push the images
+
+[docker-manifest]: https://github.com/derekmerck/docker-manifest
 
 ```bash
 $ docker run --rm --privileged multiarch/qemu-user-static:register --reset
 $ docker-compose build orthanc-amd64 orthanc-arm32v7 orthanc-arm64v8
 $ docker-compose bulid orthanc-plugins-amd64 orthanc-plugins-arm32v7 orthanc-plugins-arm64v8
+$ pip install git+https://github.com/derekmerck/docker-manifest
 $ mkdir -p $HOME/.docker && echo '{"experimental":"enabled"}' > "$HOME/.docker/config.json"
-$ python3 docker-manifest.py --d $DOCKER_USERNAME orthanc
-$ python3 docker-manifest.py --d $DOCKER_USERNAME orthanc-plugins
+$ python3 -m docker-manifest --d $DOCKER_USERNAME orthanc
+$ python3 -m docker-manifest --d $DOCKER_USERNAME orthanc-plugins
 ```
 
 A [Travis][] automation pipeline for git-push-triggered image regeneration and tagging is demonstrated in the `.travis.yml` script.  However, these cross-compiling jobs exceed Travis' 50-minute timeout window, so builds are currently done by hand using cloud infrastructure.
