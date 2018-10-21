@@ -45,3 +45,22 @@ services:
       args:
         DOCKER_ARCH:  arm64v8
     image: orthanc-plugins-arm64v8
+
+
+  # Self-configuring
+
+  orthanc-confd-amd64:
+    build:
+      context: orthanc-confd
+    image: orthanc-confd-amd64
+
+  # TODO: arm32 build for confd doesn't exist
+
+  orthanc-confd-arm64v8:
+    build:
+      context: orthanc-confd
+      args:
+        DOCKER_ARCH:  arm64v8
+        CONFD_PKG: https://github.com/kelseyhightower/confd/releases/download/v0.16.0/confd-0.16.0-linux-arm64
+    image: orthanc-confd-arm64v8
+
