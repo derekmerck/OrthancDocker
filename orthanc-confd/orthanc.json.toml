@@ -1,0 +1,42 @@
+[template]
+src = "orthanc.json.tmpl"
+dest = "/etc/orthanc/orthanc.json"
+keys = [
+    "/orthanc/name",
+    "/orthanc/aet",
+
+    "/orthanc/max/size",
+    "/orthanc/max/patients",
+
+    "/orthanc/store/dicom",
+
+    "/orthanc/route/enabled",
+
+    "/orthanc/remote/enabled",
+    "/orthanc/auth/enabled",
+    "/orthanc/user",
+    "/orthanc/password",
+
+    "/orthanc/user/0",
+    "/orthanc/user/1",
+    "/orthanc/user/2",
+    "/orthanc/user/3",
+
+    "/orthanc/peer/0",
+    "/orthanc/peer/1",
+    "/orthanc/peer/2",
+    "/orthanc/peer/3",
+
+    "/orthanc/mod/0",
+    "/orthanc/mod/1",
+    "/orthanc/mod/2",
+    "/orthanc/mod/3",
+
+    "/orthanc/pg/enabled",
+    "/orthanc/pg/store/dicom",
+    "/orthanc/pg/host",
+    "/orthanc/pg/port",
+    "/orthanc/pg/user",
+    "/orthanc/pg/password",
+    "/orthanc/pg/database"
+]

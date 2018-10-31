@@ -1,0 +1,18 @@
+function OnStoredInstance(instanceId, tags, metadata)
+
+    {{- if exists "/orthanc/route/to/peers" }}
+        {{- range split (getv "/orthanc/route/to/peers") "," }}
+    SendToPeer( instanceId, '{{ . }}' )
+        {{- end }}
+    {{- end }}
+
+    {{- if exists "/orthanc/route/to/mods" }}
+        {{- range split (getv "/orthanc/route/to/mods") "," }}
+    SendToModality( instanceId, '{{ . }}' )
+        {{- end }}
+    {{- end }}
+
+    {{- if ne (getv "/orthanc/route/and/store" "false") "true" }}
+    Delete(instanceId)
+    {{- end }}
+end
