@@ -32,6 +32,9 @@
   // List of paths to the custom Lua scripts that are to be loaded
   // into this instance of Orthanc
   "LuaScripts" : [
+{{- if exists "/orthanc/route/enabled" }}
+    "/var/lib/orthanc/scripts/routing.lua"
+{{- end }}
   ],
 
   // List of paths to the plugins that are to be loaded into this
@@ -41,10 +44,10 @@
   // find shared libraries. Backslashes must be either escaped by
   // doubling them, or replaced by forward slashes "/".
   "Plugins" : [
-{{ if exists "/orthanc/pg/enabled" }}
+{{- if exists "/orthanc/pg/enabled" }}
     "/usr/share/orthanc/plugins/libOrthancPostgreSQLIndex.so",
     "/usr/share/orthanc/plugins/libOrthancPostgreSQLStorage.so"
-{{ end }}
+{{- end }}
   ],
 
   // Maximum number of processing jobs that are simultaneously running
@@ -89,7 +92,7 @@
   "DicomServerEnabled" : true,
 
   // The DICOM Application Entity Title
-  "DicomAet" : "{{getv "/orthanc/aetitle" "ORTHANC"}}",
+  "DicomAet" : "{{getv "/orthanc/aet" "ORTHANC"}}",
 
   // Check whether the called AET corresponds to the AET of Orthanc
   // during an incoming DICOM SCU request
@@ -131,7 +134,7 @@
    **/
 
   // Whether remote hosts can connect to the HTTP server
-  "RemoteAccessAllowed" : {{getv "/orthanc/remote/allow" "true"}},
+  "RemoteAccessAllowed" : {{getv "/orthanc/remote/enabled" "true"}},
 
   // Whether or not SSL is enabled
   "SslEnabled" : false,
@@ -141,12 +144,28 @@
   "SslCertificate" : "certificate.pem",
 
   // Whether or not the password protection is enabled
-  "AuthenticationEnabled" : {{getv "/orthanc/remote/auth" "true"}},
+  "AuthenticationEnabled" : {{getv "/orthanc/auth/enabled" "true"}},
 
   // The list of the registered users. Because Orthanc uses HTTP
   // Basic Authentication, the passwords are stored as plain text.
   "RegisteredUsers" : {
     "{{getv "/orthanc/remote/user" "orthanc"}}": "{{getv "/orthanc/remote/password" "passw0rd!"}}"
+  {{- if exists "/orthanc/user/0" }}
+    {{- $user := split (getv "/orthanc/user/0") "," }}
+    , "{{index $user 0}}": "{{index $user 1}}"
+  {{- end }}
+  {{- if exists "/orthanc/user/1" }}
+    {{- $user := split (getv "/orthanc/user/1") "," }}
+    , "{{index $user 0}}": "{{index $user 1}}"
+  {{- end }}
+  {{- if exists "/orthanc/user/2" }}
+    {{- $user := split (getv "/orthanc/user/2") "," }}
+    , "{{index $user 0}}": "{{index $user 1}}"
+  {{- end }}
+  {{- if exists "/orthanc/user/3" }}
+    {{- $user := split (getv "/orthanc/user/3") "," }}
+    , "{{index $user 0}}": "{{index $user 1}}"
+  {{- end }}
   },
 
   /**
@@ -155,6 +174,23 @@
 
   // The list of the known DICOM modalities
   "DicomModalities" : {
+  {{- if exists "/orthanc/mod/0" }}
+    {{- $mod := split (getv "/orthanc/mod/0") "," }}
+    "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", "{{index $mod 3}}" ]
+  {{- end }}
+  {{- if exists "/orthanc/mod/1" }}
+    {{- $mod := split (getv "/orthanc/mod/1") "," }}
+    , "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", "{{index $mod 3}}" ]
+  {{- end }}
+  {{- if exists "/orthanc/mod/2" }}
+    {{- $mod := split (getv "/orthanc/mod/2") "," }}
+    , "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", "{{index $mod 3}}" ]
+  {{- end }}
+  {{- if exists "/orthanc/mod/3" }}
+    {{- $mod := split (getv "/orthanc/mod/3") "," }}
+    , "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", "{{index $mod 3}}" ]
+  {{- end }}
+
     /**
      * Uncommenting the following line would enable Orthanc to
      * connect to an instance of the "storescp" open-source DICOM
@@ -209,6 +245,23 @@
      **/
     // "peer"  : [ "http://127.0.0.1:8043/", "alice", "alicePassword" ]
     // "peer2" : [ "http://127.0.0.1:8044/" ]
+
+  {{- if exists "/orthanc/peer/0" }}
+    {{- $peer := split (getv "/orthanc/peer/0") "," }}
+    "{{index $peer 0}}": [ "{{index $peer 1}}", "{{index $peer 2}}", "{{index $peer 3}}" ]
+  {{- end }}
+  {{- if exists "/orthanc/peer/1" }}
+    {{- $peer := split (getv "/orthanc/peer/1") "," }}
+    , "{{index $peer 0}}": [ "{{index $peer 1}}", "{{index $peer 2}}", "{{index $peer 3}}" ]
+  {{- end }}
+  {{- if exists "/orthanc/peer/2" }}
+    {{- $peer := split (getv "/orthanc/peer/2") "," }}
+    , "{{index $peer 0}}": [ "{{index $peer 1}}", "{{index $peer 2}}", "{{index $peer 3}}" ]
+  {{- end }}
+  {{- if exists "/orthanc/peer/3"}}
+    {{- $peer := split (getv "/orthanc/peer/3") "," }}
+    , "{{index $peer 0}}": [ "{{index $peer 1}}", "{{index $peer 2}}", "{{index $peer 3}}" ]
+  {{- end }}
 
     /**
      * This is another, more advanced format to define Orthanc
@@ -407,13 +460,13 @@
 
 {{if exists "/orthanc/pg/enabled"}}
   , "PostgreSQL" : {
-    "EnableIndex" : true,
-    "EnableStorage" : false,
-    "Host" : "{{ getv "orthanc/pg/host" "localhost" }}",
-    "Port" : {{ getv "orthanc/pg/port" "5432" }},
-    "Database" : "{{ getv "orthanc/pg/database" "orthanc" }}",
-    "Username" : "{{ getv "orthanc/pg/user" "postgres" }}",
-    "Password" : "{{ getv "orthanc/pg/password"  "passw0rd!" }}",
+    "EnableIndex" : {{ getv "/orthanc/pg/enabled" "false" }},
+    "EnableStorage" : {{ getv "/orthanc/pg/store/dicom" "false" }},
+    "Host" : "{{ getv "/orthanc/pg/host" "localhost" }}",
+    "Port" :  {{ getv "/orthanc/pg/port" "5432" }},
+    "Database" : "{{ getv "/orthanc/pg/database" "postgres" }}",
+    "Username" : "{{ getv "/orthanc/pg/user" "postgres" }}",
+    "Password" : "{{ getv "/orthanc/pg/password" "passw0rd!" }}",
     "Lock": false
   }
 {{end}}

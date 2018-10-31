@@ -16,7 +16,7 @@ Orthanc is developed and maintained by Sébastien Jodogne. Full documentation is
 
 This repo is a fork of Jodogne's [OrthancDocker](https://github.com/jodogne/OrthancDocker) project.  The `xarch` branch creates cross-architecture Docker images for the most recent default/mainline release version of Orthanc.  These images are manifested per modern Docker.io guidelines so that an appropriately architected image can be will automatically selected for a given tag depending on the pulling architecture.
 
-This repo also creates a "self-configuring" orthanc image, motivated by the [OsimisDocker](https://osimis.atlassian.net/wiki/spaces/OKB/pages/26738689/How+to+use+osimis+orthanc+Docker+images) environment-variable-based configurator.  The `orthanc-confd` image is based on `orthanc-plguins` and uses [confd][] to generate an appropriate configuration file from environment variables at startup.  The `orthanc-confd` image also includes a modern Docker container "healthcheck" attribute that regularly checks connectivity on 8042.
+This repo also creates a "self-configuring" orthanc image, motivated by the [OsimisDocker](https://osimis.atlassian.net/wiki/spaces/OKB/pages/26738689/How+to+use+osimis+orthanc+Docker+images) environment-variable-based configurator.  The `orthanc-confd` image is based on `orthanc-plugins` and uses [confd][] to generate an appropriate configuration file from environment variables at startup.  It can also create a postgres database for itself if needed, and it includes a modern Docker container "healthcheck" attribute that regularly checks connectivity on 8042.
 
 [confd]: https://github.com/kelseyhightower/confd
 
@@ -121,23 +121,37 @@ This image is also drop-in compatible with the [derekmerck.orthanc-docker](https
 ## Confd Options
 
 ```bash
-$ docker run -e ORTHANC_PASSWORD=my_password -e ORTHANC_AETITLE=MY_ORTHANC derekmerck/orthanc-confd 
+$ docker run -e ORTHANC_PASSWORD=my_password -e ORTHANC_AET=MY_ORTHANC derekmerck/orthanc-confd 
 ```
 
-Following options are currently supported.
+Following is a list of common options and their defaults that can be configured through environment variables.
 
 ```yaml
+ORTHANC_VERBOSE=false
+
 ORTHANC_NAME=Orthanc
-ORTHANC_AE_TITLE=ORTHANC
+ORTHANC_AET=ORTHANC
+ORTHANC_MAX_SIZE=0    # Max storage size in MB
 ORTHANC_MAX_PATIENTS=0
 ORTHANC_STORE_DICOM=true
 
-ORTHANC_ALLOW_REMOTE_ACCESS=true
-ORTHANC_ENABLE_AUTH=true
+ORTHANC_REMOTE_ENABLED=true
+ORTHANC_AUTH_ENABLED=true
 ORTHANC_USER=orthanc
 ORTHANC_PASSWORD=passw0rd!
 
+ORTHANC_USER_[0-3]=""  # Additional users in "user,password" format
+ORTHANC_MOD_[0-3]=""   # Known DICOM modalities in "name,aet,host,port" format
+ORTHANC_PEER_[0-3]=""  # Known Orthanc peers in "name,url,user,password" format
+```
+
+_Note: avoid using `,` or escaped characters like quotes in passwords as they interfere with the simple string splitting used for parsing here._
+
+The postgres plugin can be similarly configured using "ORTHANC_PG" variables
+
+```bash
 ORTHANC_PG_ENABLED=false
+ORTHANC_PG_STORE_DICOM=false
 ORTHANC_PG_HOST=localhost
 ORTHANC_PG_PORT=5432
 ORTHANC_PG_USER=postgres
@@ -145,30 +159,45 @@ ORTHANC_PG_PASSWORD=passw0rd!
 ORTHANC_PG_DATABASE=orthanc
 ```
 
-Grab the latest `orthanc.json` file to create the template:
+Simple routing to known peers or modalities can be configured using "ORTHANC_ROUTE" variables.
 
 ```bash
-$ docker run orthanc
-$ docker cp container:/etc/orthanc/orthanc.json .
+ORTHANC_ROUTE_ENABLED=false
+ORTHANC_ROUTE_AND_STORE=false  # Do not delete image after forwarding 
+ORTHANC_ROUTE_TO_PEERS=name1,name1,name2,...  # Names from ORTHANC_PEER_N descriptions
+ORTHANC_ROUTE_TO_MODS=name0,name1,name2,...   # Names from ORTHANC_MOD_N descriptions
 ```
 
-There is a good summary of this trick here <http://www.mricho.com/confd-and-docker-separating-config-and-code-for-containers/>
+There is a good summary of this "confd onetime" configuration method here <http://www.mricho.com/confd-and-docker-separating-config-and-code-for-containers/>
 
 
 ## Changes
 
-- Rebased images from `_/ubuntu:14` to `resin/$ARCH-debian:stretch`
-- Set locale using a [Debian-friendly method](https://unix.stackexchange.com/questions/246846/cant-generate-en-us-utf-8-locale)
-- Refactored into two-stage build, with `orthanc-plugins` image based on `orthanc` image
-- Specified `libssl1.0-dev` in `orthanc` image
-- Added [GDCM][] CLI tools to `orthanc` image
-- Refactored `command` to leave `entrypoint` available for init process
-- `orthanc-postgresql` code-base updated to use `orthanc-databases` in `orthanc-plugins` image
-- Refactored into a three-stage build, with `orthanc-confd` image based on `orthanc-plugins` image
-- Wrapped Orthanc invocation with `confd`
+- Major: Rebased images from `_/ubuntu:14` to `resin/$ARCH-debian:stretch`
+- Major: Refactored into two-stage build, with `orthanc-plugins` image based on `orthanc` image
+- Major: `orthanc-postgresql` code-base updated to use `orthanc-databases` in `orthanc-plugins` image
+- Major: Refactored into a three-stage build, with `orthanc-confd` image based on `orthanc-plugins` image
+- Major: Wrapped Orthanc invocation with `confd`
+- Major: Added `psychopg2` script to check for Postgres database and create if necessary
+- Major: Added simple `lua`-scripted auto-forwarding
+
+- Minor: Set locale using a [Debian-friendly method](https://unix.stackexchange.com/questions/246846/cant-generate-en-us-utf-8-locale)
+- Minor: Specified `libssl1.0-dev` in `orthanc` image
+- Minor: Added [GDCM][] CLI tools to `orthanc` image
+- Minor: Refactored `command` to leave `entrypoint` available for init process
+- Minor: Redirected `deb.debian.org` sources to `cdn-fastly.deb.debian.org` to mitigate `apt` source errors
 
 [GDCM]: http://gdcm.sourceforge.net/wiki/index.php/Main_Page
 
+
+## Notes
+
+Grab the latest `orthanc.json` file to update the template:
+
+```bash
+$ docker run -d --name orthanc derekmerck/orthanc
+$ docker cp orthanc:/etc/orthanc/orthanc.json .
+```
 
 ## License
 
