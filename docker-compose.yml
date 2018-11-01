@@ -64,3 +64,9 @@ services:
         CONFD_PKG: https://github.com/kelseyhightower/confd/releases/download/v0.16.0/confd-0.16.0-linux-arm64
     image: orthanc-confd-arm64v8
 
+  # Osimis Webviewer (amd64 ONLY)
+
+  orthanc-wbv-amd64:
+    build:
+      context: orthanc-wbv
+    image: orthanc-wbv-amd64
