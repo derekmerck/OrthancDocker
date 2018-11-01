@@ -23,11 +23,11 @@ RUN mkdir -p /etc/confd/{conf.d,templates}
 COPY *.tmpl /etc/confd/templates/
 COPY *.toml /etc/confd/conf.d/
 
-COPY check_postgres.py /usr/bin/local/check_postgres.py
-RUN chmod +x /usr/bin/local/check_postgres.py
-COPY bootstrap.sh /usr/bin/local/bootstrap.sh
-RUN chmod +x /usr/bin/local/bootstrap.sh
+COPY check_postgres.py /usr/local/bin/check_postgres.py
+RUN chmod +x /usr/local/bin/check_postgres.py
+COPY bootstrap.sh /usr/local/bin/bootstrap.sh
+RUN chmod +x /usr/local/bin/bootstrap.sh
 
-CMD /usr/bin/local/bootstrap.sh
+CMD /usr/local/bin/bootstrap.sh
 
 HEALTHCHECK --interval=5s --timeout=2s --start-period=10s CMD bash -c "printf 'GET / HTTP/1.1\n\n' > /dev/tcp/127.0.0.1/8042"
