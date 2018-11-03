@@ -20,8 +20,10 @@ ARG CONFD_PKG="https://github.com/kelseyhightower/confd/releases/download/v0.16.
 RUN curl -L $CONFD_PKG -o /usr/local/bin/confd && chmod +x /usr/local/bin/confd
 
 RUN mkdir -p /etc/confd/{conf.d,templates}
-COPY *.tmpl /etc/confd/templates/
-COPY *.toml /etc/confd/conf.d/
+COPY orthanc.json.tmpl /etc/confd/orthanc/templates/
+COPY orthanc.json.toml /etc/confd/orthanc/conf.d/
+COPY routing.lua.tmpl /etc/confd/routing/templates/
+COPY routing.lua.toml /etc/confd/routing/conf.d/
 
 COPY check_postgres.py /usr/local/bin/check_postgres.py
 RUN chmod +x /usr/local/bin/check_postgres.py

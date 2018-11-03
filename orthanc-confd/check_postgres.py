@@ -8,11 +8,14 @@ import argparse
 def parse_args():
 
     p = argparse.ArgumentParser()
-    p.add_argument('-h', '--host', default='localhost')
+    p.add_argument('-H', '--host', default='localhost')
     p.add_argument('-p', '--port', default='5432')
     p.add_argument('-u', '--user', default='postgres')
     p.add_argument('-w', '--password', default='password')
     p.add_argument('-d', '--database', default='orthanc')
+
+    return p.parse_args()
+
 
 if __name__=="__main__":
 

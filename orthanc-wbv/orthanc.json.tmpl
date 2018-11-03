@@ -179,19 +179,19 @@
   "DicomModalities" : {
   {{- if exists "/orthanc/mod/0" }}
     {{- $mod := split (getv "/orthanc/mod/0") "," }}
-    "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", "{{index $mod 3}}" ]
+    "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", {{index $mod 3}} ]
   {{- end }}
   {{- if exists "/orthanc/mod/1" }}
     {{- $mod := split (getv "/orthanc/mod/1") "," }}
-    , "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", "{{index $mod 3}}" ]
+    , "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", {{index $mod 3}} ]
   {{- end }}
   {{- if exists "/orthanc/mod/2" }}
     {{- $mod := split (getv "/orthanc/mod/2") "," }}
-    , "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", "{{index $mod 3}}" ]
+    , "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", {{index $mod 3}} ]
   {{- end }}
   {{- if exists "/orthanc/mod/3" }}
     {{- $mod := split (getv "/orthanc/mod/3") "," }}
-    , "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", "{{index $mod 3}}" ]
+    , "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", {{index $mod 3}} ]
   {{- end }}
 
     /**
@@ -206,7 +206,7 @@
      * A fourth parameter is available to enable patches for
      * specific PACS manufacturers. The allowed values are currently:
      * - "Generic" (default value),
-     * - "GenericNoWildcardInDates" (to replace "*" by "" in date fields 
+     * - "GenericNoWildcardInDates" (to replace "*" by "" in date fields
      *   in outgoing C-Find requests originating from Orthanc)
      * - "GenericNoUniversalWildcard" (to replace "*" by "" in all fields
      *   in outgoing C-Find SCU requests originating from Orthanc)
@@ -407,7 +407,7 @@
        "Verbose" : true
      }
    **/
-  
+
   // If set to "true", Orthanc will still handle "SOP Classes in
   // Study" (0008,0062) in C-FIND requests, even if the "SOP Class
   // UID" metadata is not available in the database (which is the case
@@ -461,8 +461,8 @@
   // 1.4.1, the implicit behavior corresponded to "false".
   "OverwriteInstances" : false
 
-{{- if exists "/orthanc/pg/enabled" }}
-, "PostgreSQL" : {
+{{if exists "/orthanc/pg/enabled"}}
+  , "PostgreSQL" : {
     "EnableIndex" : {{ getv "/orthanc/pg/enabled" "false" }},
     "EnableStorage" : {{ getv "/orthanc/pg/store/dicom" "false" }},
     "Host" : "{{ getv "/orthanc/pg/host" "localhost" }}",
@@ -472,7 +472,7 @@
     "Password" : "{{ getv "/orthanc/pg/password" "passw0rd!" }}",
     "Lock": false
   }
-{{- end }}
+{{end}}
 
 {{- if exists "/orthanc/wbv/enabled"}}
 , "WebViewer": {
@@ -480,7 +480,7 @@
   "AnnotationStorageEnabled": {{ getv "/orthanc/wbv/store/annotations" "false" }},
   "KeyImageCaptureEnabled": false,
   "PrintEnabled": true
-  },
+  }
 {{- end }}
 
 }

@@ -11,5 +11,5 @@ LABEL description="X-Arch Orthanc, free cross-platform DICOM server (plugins, co
 
 COPY --from=wvb /usr/share/orthanc/plugins/libOsimisWebViewer.so /usr/share/orthanc/plugins/
 
-COPY *.tmpl /etc/confd/templates/
-COPY *.toml /etc/confd/conf.d/
+COPY *.tmpl /etc/confd/orthanc/templates/
+COPY *.toml /etc/confd/orthanc/conf.d/

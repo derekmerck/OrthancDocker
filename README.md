@@ -21,16 +21,15 @@ This repo also creates a "self-configuring" orthanc image, `orthanc-confd`, moti
 - Based on the cross-architecture `orthanc-plugins` image
 - Uses [confd][] to generate an appropriate `orthanc.json` configuration file from environment variables at startup
 - Creates a postgres database for itself if needed
-- Provides simple route forwarding to other Orthanc peers and DICOM modalities
+- Provides simple auto-forwarding to other Orthanc peers and DICOM modalities
 - Includes a modern Docker container "healthcheck" attribute that regularly checks connectivity on 8042
+
+[confd]: https://github.com/kelseyhightower/confd
 
 Futher movitivated by the OsirisDocker project, this repo also creates an "osimis-webviewer" orthanc image, `orthanc-wbv`.
  
-- Based on `orthanc-confd`
+- Based on cross-architecture `orthanc-confd`, but _ONLY_ built for `amd64` architectures, because the binary is copied directly from the Osimis webviewer image
 - Includes the very useful webviewer plugin from the Osimis Orthanc project
-- _ONLY_ built for `amd64` architectures, because the binary is copied directly from the Osimis webviewer image
-
-[confd]: https://github.com/kelseyhightower/confd
 
 
 ## Use It
@@ -180,8 +179,8 @@ Simple routing to known peers or modalities can be configured using `ORTHANC_ROU
 ```bash
 ORTHANC_ROUTE_ENABLED=false
 ORTHANC_ROUTE_AND_STORE=false  # Do not delete image after forwarding 
-ORTHANC_ROUTE_TO_PEERS=name1,name1,name2,...  # Names from ORTHANC_PEER_N descriptions
-ORTHANC_ROUTE_TO_MODS=name0,name1,name2,...   # Names from ORTHANC_MOD_N descriptions
+ORTHANC_ROUTE_TO_PEERS=""      # Names from ORTHANC_PEER_N as "name1,name1,name2,..."
+ORTHANC_ROUTE_TO_MODS=""       # Names from ORTHANC_MOD_N as "name1,name1,name2,..."
 ```
 
 The webviewer plugin for the `orthanc-wbv` image is configured using using `ORTHANC_WBV` variables.

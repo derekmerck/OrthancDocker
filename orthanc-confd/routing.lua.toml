@@ -1,7 +1,6 @@
 [template]
 src = "routing.lua.tmpl"
 dest = "/var/lib/orthanc/scripts/routing.lua"
-mode = "0711"
 keys = [
     "/orthanc/route/enabled",
     "/orthanc/route/and/store",
