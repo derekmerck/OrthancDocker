@@ -176,19 +176,19 @@
   "DicomModalities" : {
   {{- if exists "/orthanc/mod/0" }}
     {{- $mod := split (getv "/orthanc/mod/0") "," }}
-    "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", "{{index $mod 3}}" ]
+    "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", {{index $mod 3}} ]
   {{- end }}
   {{- if exists "/orthanc/mod/1" }}
     {{- $mod := split (getv "/orthanc/mod/1") "," }}
-    , "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", "{{index $mod 3}}" ]
+    , "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", {{index $mod 3}} ]
   {{- end }}
   {{- if exists "/orthanc/mod/2" }}
     {{- $mod := split (getv "/orthanc/mod/2") "," }}
-    , "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", "{{index $mod 3}}" ]
+    , "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", {{index $mod 3}} ]
   {{- end }}
   {{- if exists "/orthanc/mod/3" }}
     {{- $mod := split (getv "/orthanc/mod/3") "," }}
-    , "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", "{{index $mod 3}}" ]
+    , "{{index $mod 0}}": [ "{{index $mod 1}}", "{{index $mod 2}}", {{index $mod 3}} ]
   {{- end }}
 
     /**
