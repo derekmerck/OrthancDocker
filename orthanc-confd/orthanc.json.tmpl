@@ -18,7 +18,7 @@
   "IndexDirectory" : "/var/lib/orthanc/db",
 
   // Enable the transparent compression of the DICOM instances
-  "StorageCompression" : false,
+  "StorageCompression" : {{getv "/orthanc/store/compressed" "false"}},
 
   // Maximum size of the storage in MB (a value of "0" indicates no
   // limit on the storage size)
@@ -149,7 +149,7 @@
   // The list of the registered users. Because Orthanc uses HTTP
   // Basic Authentication, the passwords are stored as plain text.
   "RegisteredUsers" : {
-    "{{getv "/orthanc/remote/user" "orthanc"}}": "{{getv "/orthanc/remote/password" "passw0rd!"}}"
+    "{{getv "/orthanc/user" "orthanc"}}": "{{getv "/orthanc/password" "passw0rd!"}}"
   {{- if exists "/orthanc/user/0" }}
     {{- $user := split (getv "/orthanc/user/0") "," }}
     , "{{index $user 0}}": "{{index $user 1}}"
