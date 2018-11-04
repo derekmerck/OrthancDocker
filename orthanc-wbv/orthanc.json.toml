@@ -9,6 +9,7 @@ keys = [
     "/orthanc/max/patients",
 
     "/orthanc/store/dicom",
+    "/orthanc/store/compressed",
 
     "/orthanc/route/enabled",
 

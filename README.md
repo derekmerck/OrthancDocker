@@ -149,6 +149,7 @@ ORTHANC_AET=ORTHANC
 ORTHANC_MAX_SIZE=0    # Max storage size in MB
 ORTHANC_MAX_PATIENTS=0
 ORTHANC_STORE_DICOM=true
+ORTHANC_STORE_COMPRESSED=false  # zlib file compression
 
 ORTHANC_REMOTE_ENABLED=true
 ORTHANC_AUTH_ENABLED=true
@@ -166,7 +167,7 @@ The postgres plugin can be similarly configured using `ORTHANC_PG` variables
 
 ```bash
 ORTHANC_PG_ENABLED=false
-ORTHANC_PG_STORE_DICOM=false
+ORTHANC_PG_STORE_DICOM=false  # Use Postgres as persistent storage for file data
 ORTHANC_PG_HOST=localhost
 ORTHANC_PG_PORT=5432
 ORTHANC_PG_USER=postgres

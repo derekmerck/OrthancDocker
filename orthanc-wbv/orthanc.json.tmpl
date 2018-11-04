@@ -18,7 +18,7 @@
   "IndexDirectory" : "/var/lib/orthanc/db",
 
   // Enable the transparent compression of the DICOM instances
-  "StorageCompression" : false,
+  "StorageCompression" : {{getv "/orthanc/store/compressed" "false"}},
 
   // Maximum size of the storage in MB (a value of "0" indicates no
   // limit on the storage size)
@@ -49,7 +49,7 @@
     "/usr/share/orthanc/plugins/libOrthancPostgreSQLStorage.so"
 {{- end }}
 {{- if exists "/orthanc/wbv/enabled" }}
-    "/usr/share/orthanc/plugins/libOsimisWebViewer.so"
+  , "/usr/share/orthanc/plugins/libOsimisWebViewer.so"
 {{- end }}
   ],
 
@@ -152,7 +152,7 @@
   // The list of the registered users. Because Orthanc uses HTTP
   // Basic Authentication, the passwords are stored as plain text.
   "RegisteredUsers" : {
-    "{{getv "/orthanc/remote/user" "orthanc"}}": "{{getv "/orthanc/remote/password" "passw0rd!"}}"
+    "{{getv "/orthanc/user" "orthanc"}}": "{{getv "/orthanc/password" "passw0rd!"}}"
   {{- if exists "/orthanc/user/0" }}
     {{- $user := split (getv "/orthanc/user/0") "," }}
     , "{{index $user 0}}": "{{index $user 1}}"
@@ -462,7 +462,7 @@
   "OverwriteInstances" : false
 
 {{if exists "/orthanc/pg/enabled"}}
-  , "PostgreSQL" : {
+, "PostgreSQL" : {
     "EnableIndex" : {{ getv "/orthanc/pg/enabled" "false" }},
     "EnableStorage" : {{ getv "/orthanc/pg/store/dicom" "false" }},
     "Host" : "{{ getv "/orthanc/pg/host" "localhost" }}",
@@ -476,10 +476,10 @@
 
 {{- if exists "/orthanc/wbv/enabled"}}
 , "WebViewer": {
-  "StudyDownloadEnabled": {{ getv "/orthanc/wbv/download/enabled" "true" }},
-  "AnnotationStorageEnabled": {{ getv "/orthanc/wbv/store/annotations" "false" }},
-  "KeyImageCaptureEnabled": false,
-  "PrintEnabled": true
+    "StudyDownloadEnabled": {{ getv "/orthanc/wbv/download/enabled" "true" }},
+    "AnnotationStorageEnabled": {{ getv "/orthanc/wbv/store/annotations" "false" }},
+    "KeyImageCaptureEnabled": false,
+    "PrintEnabled": true
   }
 {{- end }}
 
