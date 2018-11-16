@@ -194,7 +194,7 @@ ORTHANC_WBV_STORE_ANNOTATIONS=false
 
 There is a good summary of this "confd onetime" configuration method here <http://www.mricho.com/confd-and-docker-separating-config-and-code-for-containers/>
 
-To avoid writing any config data (or passwords) to disk, bind a `tmpfs` mount to `/etc/orthanc`.  (Does not work with swarm deployment.)
+To avoid writing any config data (or passwords) to disk, bind a `tmpfs` mount to `/etc/orthanc`.  (Requires different syntax for swarm deployment.)
 
 ```
 $ docker run --tmpfs /etc/orthanc derekmerck/orthanc-confd
@@ -223,6 +223,7 @@ services:
 - Minor: Added [GDCM][] CLI tools to `orthanc` image
 - Minor: Refactored `command` to leave `entrypoint` available for init process
 - Minor: Redirected `deb.debian.org` sources to `cdn-fastly.deb.debian.org` to mitigate `apt` source errors
+- Minor: Hardened build with cmake opitions for PIC and stack-protection
 
 [GDCM]: http://gdcm.sourceforge.net/wiki/index.php/Main_Page
 
