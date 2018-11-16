@@ -194,7 +194,20 @@ ORTHANC_WBV_STORE_ANNOTATIONS=false
 
 There is a good summary of this "confd onetime" configuration method here <http://www.mricho.com/confd-and-docker-separating-config-and-code-for-containers/>
 
+To avoid writing any config data (or passwords) to disk, bind a `tmpfs` mount to `/etc/orthanc`.  (Does not work with swarm deployment.)
 
+```
+$ docker run --tmpfs /etc/orthanc derekmerck/orthanc-confd
+```
+
+Or in `docker-compose.yml`:
+
+```yaml
+services:
+  orthanc:
+    image: derekmerck/orthanc-confd
+    tmpfs: /etc/orthanc
+```
 ## Changes
 
 - Major: Rebased images from `_/ubuntu:14` to `resin/$ARCH-debian:stretch`
