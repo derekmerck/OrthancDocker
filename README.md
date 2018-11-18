@@ -223,7 +223,7 @@ services:
 - Minor: Added [GDCM][] CLI tools to `orthanc` image
 - Minor: Refactored `command` to leave `entrypoint` available for init process
 - Minor: Redirected `deb.debian.org` sources to `cdn-fastly.deb.debian.org` to mitigate `apt` source errors
-- Minor: Hardened build with cmake opitions for PIC and stack-protection
+- Minor: Hardened build with cmake options for PIC and stack-protection
 
 [GDCM]: http://gdcm.sourceforge.net/wiki/index.php/Main_Page
 
