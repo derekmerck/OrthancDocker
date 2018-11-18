@@ -54,7 +54,13 @@ services:
       context: orthanc-confd
     image: orthanc-confd-amd64
 
-  # TODO: arm32 build for confd doesn't exist
+  orthanc-confd-arm32v7:
+    build:
+      context: orthanc-confd
+      args:
+        DOCKER_ARCH:  arm32v7
+        CONFD_PKG: https://www.dropbox.com/s/u1d42ckst1y02t6/confd-0.17.0-dev-linux-arm32?dl=0
+    image: orthanc-confd-arm32v7
 
   orthanc-confd-arm64v8:
     build:
