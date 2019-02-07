@@ -26,6 +26,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt -y install --no-install-recommends \
     build-essential \
     unzip \
     cmake \
+    git \
     mercurial \
     uuid-dev \
     libcurl4-openssl-dev \
@@ -48,6 +49,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt -y install --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && locale-gen
+
+ADD ./build-dcmtk.sh /root/build-dcmtk.sh
+RUN bash /root/build-dcmtk.sh
 
 ADD ./build-orthanc.sh /root/build-orthanc.sh
 RUN bash /root/build-orthanc.sh "default"

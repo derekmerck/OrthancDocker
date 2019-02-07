@@ -44,14 +44,19 @@ cmake \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DSTANDALONE_BUILD=ON \
     -DUSE_GOOGLE_TEST_DEBIAN_PACKAGE=ON \
-    -DUSE_SYSTEM_DCMTK=OFF \
+    -DUSE_SYSTEM_DCMTK=ON \
     -DUSE_SYSTEM_CIVETWEB=OFF \
     -DUSE_SYSTEM_MONGOOSE=OFF \
-    -DUSE_SYSTEM_OPENSSL=OFF \
+    -DUSE_SYSTEM_OPENSSL=ON \
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
     -DCMAKE_CXX_FLAGS:STRING="-fstack-protector" \
     ..
+
 make -j$COUNT_CORES
+# To run the unit tests, we need to install the "en_US" locale
+locale-gen en_US
+locale-gen en_US.UTF-8
+update-locale
 ./UnitTests
 
 # Install the Orthanc core
