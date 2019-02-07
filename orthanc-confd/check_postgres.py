@@ -37,7 +37,7 @@ if __name__=="__main__":
     try:
         con = psycopg2.connect(
                             user = opts.user,
-                            password = opts.password,
+                            password =opts.password,
                             host = opts.host,
                             port = opts.port )
         con.autocommit = True
