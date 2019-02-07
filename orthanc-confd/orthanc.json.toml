@@ -8,6 +8,9 @@ keys = [
     "/orthanc/max/size",
     "/orthanc/max/patients",
 
+    "/orthanc/jobs",
+    "/orthanc/sync/cmove",
+
     "/orthanc/store/dicom",
     "/orthanc/store/compressed",
 
