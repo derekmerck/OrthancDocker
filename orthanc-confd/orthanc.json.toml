@@ -14,6 +14,10 @@ keys = [
     "/orthanc/store/dicom",
     "/orthanc/store/compressed",
 
+    "/orthanc/dicom/scp/timeout",
+    "/orthanc/dicom/scu/timeout",
+    "/orthanc/stable/age",
+
     "/orthanc/route/enabled",
 
     "/orthanc/remote/enabled",

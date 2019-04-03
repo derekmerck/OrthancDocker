@@ -125,7 +125,7 @@
   // Set the timeout (in seconds) after which the DICOM associations
   // are closed by the Orthanc SCP (server) if no further DIMSE
   // command is received from the SCU (client).
-  "DicomScpTimeout" : 30,
+  "DicomScpTimeout" : {{getv "/orthanc/dicom/scp/timeout" "30"}},
 
 
 
@@ -234,7 +234,7 @@
   // The timeout (in seconds) after which the DICOM associations are
   // considered as closed by the Orthanc SCU (client) if the remote
   // DICOM SCP (server) does not answer.
-  "DicomScuTimeout" : 10,
+  "DicomScuTimeout" : {{getv "/orthanc/dicom/scu/timeout" "10"}},
 
   // The list of the known Orthanc peers
   "OrthancPeers" : {
@@ -332,7 +332,7 @@
 
   // Number of seconds without receiving any instance before a
   // patient, a study or a series is considered as stable.
-  "StableAge" : 60,
+  "StableAge" : {{getv "/orthanc/stable/age" "60"}},
 
   // By default, Orthanc compares AET (Application Entity Titles) in a
   // case-insensitive way. Setting this option to "true" will enable
