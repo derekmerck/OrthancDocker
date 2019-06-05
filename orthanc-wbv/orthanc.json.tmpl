@@ -48,8 +48,9 @@
     "/usr/share/orthanc/plugins/libOrthancPostgreSQLIndex.so",
     "/usr/share/orthanc/plugins/libOrthancPostgreSQLStorage.so"
 {{- end }}
+{{- if (and (exists "/orthanc/pg/enabled") ("/orthanc/wbv/enabled"))}},{{- end }}
 {{- if exists "/orthanc/wbv/enabled" }}
-  , "/usr/share/orthanc/plugins/libOsimisWebViewer.so"
+    "/usr/share/orthanc/plugins/libOsimisWebViewer.so"
 {{- end }}
   ],
 
