@@ -322,6 +322,10 @@
   // and 65535. Reserved values:
   //  - The Orthanc whole-slide imaging plugin uses metadata 4200
   "UserMetadata" : {
+    {{- if exists "/orthanc/metadata/0" }}
+      {{- $meta := split (getv "/orthanc/metadata/0") "," }}
+      "{{index $meta 0}}": {{index $meta 1}}
+    {{- end }}
     // "Sample" : 1024
   },
 

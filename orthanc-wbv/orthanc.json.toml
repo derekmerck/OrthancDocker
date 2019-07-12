@@ -33,6 +33,8 @@ keys = [
     "/orthanc/mod/2",
     "/orthanc/mod/3",
 
+    "/orthanc/metadata/0",
+
     "/orthanc/pg/enabled",
     "/orthanc/pg/store/dicom",
     "/orthanc/pg/host",

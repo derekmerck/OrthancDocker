@@ -163,6 +163,8 @@ ORTHANC_PASSWORD=passw0rd!
 ORTHANC_USER_[0-3]=""  # Additional users in "user,password" format
 ORTHANC_MOD_[0-3]=""   # Known DICOM modalities in "name,aet,host,port" format
 ORTHANC_PEER_[0-3]=""  # Known Orthanc peers in "name,url,user,password" format
+
+ORTHANC_METADATA_0=""  # Optional metadata tags in "key,value" format
 ```
 
 _NOTE: avoid using `,` or escaped characters like quotes in passwords as they interfere with the simple string splitting used for parsing here._
